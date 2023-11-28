@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from keras.models import model_from_json
 from keras.preprocessing import image
-
+from tensorflow.keras.preprocessing.image import img_to_array
 # Load model from JSON file
 json_file = open('top_models\\fer.json', 'r')
 loaded_model_json = json_file.read()
@@ -21,6 +21,8 @@ while True:
     if not ret:
         break
 
+    img = cv2.flip(img, 1)
+
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces_detected = face_haar_cascade.detectMultiScale(gray_img, 1.1, 6, minSize=(150, 150))
 
@@ -28,7 +30,7 @@ while True:
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), thickness=2)
         roi_gray = gray_img[y:y + w, x:x + h]
         roi_gray = cv2.resize(roi_gray, (48, 48))
-        img_pixels = image.img_to_array(roi_gray)
+        img_pixels = img_to_array(roi_gray)
         img_pixels = np.expand_dims(img_pixels, axis=0)
         img_pixels /= 255.0
 
